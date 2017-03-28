@@ -1,6 +1,6 @@
 use std::borrow::Borrow;
 use std::collections::*;
-use std::hash::Hash;
+use std::hash::{BuildHasher, Hash};
 use std::mem;
 use std::ops::Range;
 use super::*;
@@ -359,11 +359,11 @@ impl<T: Ord> PrioQueue for BinaryHeap<T> {
     }
 }
 
-impl<K: Eq + Hash, V> Mutate for HashMap<K, V> {}
+impl<K: Eq + Hash, V, S: BuildHasher> Mutate for HashMap<K, V, S> {}
 
-impl<K: Eq + Hash, V> AddRemove for HashMap<K, V> {}
+impl<K: Eq + Hash, V, S: BuildHasher> AddRemove for HashMap<K, V, S> {}
 
-impl<K: Eq + Hash, V> Collection for HashMap<K, V> {
+impl<K: Eq + Hash, V, S: BuildHasher + Default> Collection for HashMap<K, V, S> {
     type Item = (K, V);
 
     fn len(&self) -> usize {
@@ -407,7 +407,7 @@ impl<K: Eq + Hash, V> Collection for HashMap<K, V> {
     }
 }
 
-impl<K: Eq + Hash, V> map::Base for HashMap<K, V> {
+impl<K: Eq + Hash, V, S: BuildHasher + Default> map::Base for HashMap<K, V, S> {
     type Key = K;
     type Value = V;
 
@@ -463,9 +463,9 @@ impl<'a, K: 'a + Eq + Hash, V: 'a> map::VacantEntry for hash_map::VacantEntry<'a
     }
 }
 
-impl<T: Eq + Hash> AddRemove for HashSet<T> {}
+impl<T: Eq + Hash, S: BuildHasher> AddRemove for HashSet<T, S> {}
 
-impl<T: Eq + Hash> Collection for HashSet<T> {
+impl<T: Eq + Hash, S: BuildHasher + Default> Collection for HashSet<T, S> {
     type Item = T;
 
     fn len(&self) -> usize {
@@ -509,7 +509,7 @@ impl<T: Eq + Hash> Collection for HashSet<T> {
     }
 }
 
-impl<T: Eq + Hash> Iter for HashSet<T> {
+impl<T: Eq + Hash, S: BuildHasher + Default> Iter for HashSet<T, S> {
     fn iter<'a>(&'a self) -> Box<Iterator<Item = &'a T> + 'a> {
         Box::new(self.iter())
     }
@@ -519,7 +519,7 @@ impl<T: Eq + Hash> Iter for HashSet<T> {
     }
 }
 
-impl<T: Eq + Hash> set::Base for HashSet<T> {
+impl<T: Eq + Hash, S: BuildHasher + Default> set::Base for HashSet<T, S> {
     fn is_disjoint(&self, other: &Self) -> bool {
         self.is_disjoint(other)
     }
@@ -537,7 +537,7 @@ impl<T: Eq + Hash> set::Base for HashSet<T> {
     }
 }
 
-impl<T: Eq + Hash + Borrow<Q>, Q: ?Sized + Eq + Hash> Set<Q> for HashSet<T> {
+impl<T: Eq + Hash + Borrow<Q>, Q: ?Sized + Eq + Hash, S: BuildHasher + Default> Set<Q> for HashSet<T, S> {
     fn contains(&self, item: &Q) -> bool {
         self.contains(item)
     }
