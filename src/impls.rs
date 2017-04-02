@@ -151,6 +151,20 @@ impl<K: Ord, V> map::Base for BTreeMap<K, V> {
     }
 }
 
+impl<K: Ord + Borrow<Q>, V, Q: ?Sized + Ord> Map<Q> for BTreeMap<K, V> {
+    fn get(&self, key: &Q) -> Option<&V> {
+        self.get(key)
+    }
+    
+    fn get_mut(&mut self, key: &Q) -> Option<&mut V> {
+        self.get_mut(key)
+    }
+    
+    fn remove(&mut self, key: &Q) -> Option<V> {
+        self.remove(key)
+    }
+}
+
 impl<'a, K: 'a + Ord, V: 'a> map::OccupiedEntry for btree_map::OccupiedEntry<'a, K, V> {
     type Key = K;
     type Value = V;
@@ -428,6 +442,20 @@ impl<K: Eq + Hash, V, S: BuildHasher + Default> map::Base for HashMap<K, V, S> {
             hash_map::Entry::Occupied(e) => map::Entry::Occupied(Box::new(e)),
             hash_map::Entry::Vacant(e) => map::Entry::Vacant(Box::new(e)),
         }
+    }
+}
+
+impl<K: Eq + Hash + Borrow<Q>, V, S: BuildHasher + Default, Q: ?Sized + Eq + Hash> Map<Q> for HashMap<K, V, S> {
+    fn get(&self, key: &Q) -> Option<&V> {
+        self.get(key)
+    }
+    
+    fn get_mut(&mut self, key: &Q) -> Option<&mut V> {
+        self.get_mut(key)
+    }
+    
+    fn remove(&mut self, key: &Q) -> Option<V> {
+        self.remove(key)
     }
 }
 
