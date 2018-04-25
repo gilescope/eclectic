@@ -91,7 +91,12 @@
     deque_extras,
 ))]
 
+#![feature(proc_macro)]
+extern crate trait_tests;
+extern crate proptest;
+
 mod impls;
+mod tests;
 
 pub use map::Map;
 pub use set::Set;

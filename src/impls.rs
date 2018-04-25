@@ -4,9 +4,12 @@ use std::hash::{BuildHasher, Hash};
 use std::mem;
 use std::ops::Range;
 use super::*;
+use trait_tests::test_impl;
+use super::tests::{PrioQueueTests, PrioQueueTestsType1, SetTests, SetTestsType1, CollectionTests, CollectionTestsType1, ListTests, ListTestsType1, QueueTests, QueueTestsType1};
 
 impl<T> Mutate for [T] {}
 
+//TODO #[test_impl]
 impl<T> Collection for [T] {
     type Item = T;
 
@@ -53,6 +56,7 @@ impl<T> DrainRange<Range<usize>> for [T] {
     }
 }
 
+//TODO edgecase!
 impl<T> List for [T] {
     fn get(&self, index: usize) -> Option<&T> {
         self.get(index)
@@ -87,6 +91,7 @@ impl<K: Ord, V> Mutate for BTreeMap<K, V> {}
 
 impl<K: Ord, V> AddRemove for BTreeMap<K, V> {}
 
+//TODO #[test_impl]
 impl<K: Ord, V> Collection for BTreeMap<K, V> {
     type Item = (K, V);
 
@@ -199,6 +204,7 @@ impl<'a, K: 'a + Ord, V: 'a> map::VacantEntry for btree_map::VacantEntry<'a, K, 
 
 impl<T: Ord> AddRemove for BTreeSet<T> {}
 
+#[test_impl]
 impl<T: Ord> Collection for BTreeSet<T> {
     type Item = T;
 
@@ -267,6 +273,7 @@ impl<T: Ord> set::Base for BTreeSet<T> {
     }
 }
 
+#[test_impl]
 impl<T: Ord + Borrow<Q>, Q: ?Sized + Ord> Set<Q> for BTreeSet<T> {
     fn contains(&self, item: &Q) -> bool {
         self.contains(item)
@@ -287,6 +294,7 @@ impl<T: Ord + Borrow<Q>, Q: ?Sized + Ord> Set<Q> for BTreeSet<T> {
 
 impl<T: Ord> AddRemove for BinaryHeap<T> {}
 
+#[test_impl]
 impl<T: Ord> Collection for BinaryHeap<T> {
     type Item = T;
 
@@ -341,6 +349,7 @@ impl<T: Ord> Iter for BinaryHeap<T> {
     }
 }
 
+#[test_impl]
 impl<T: Ord> Queue for BinaryHeap<T> {
     fn push(&mut self, item: T) {
         self.push(item);
@@ -355,6 +364,7 @@ impl<T: Ord> Queue for BinaryHeap<T> {
     }
 }
 
+#[test_impl]
 impl<T: Ord> PrioQueue for BinaryHeap<T> {
     fn push_pop_front(&mut self, item: T) -> T {
         match self.peek_mut() {
@@ -377,6 +387,7 @@ impl<K: Eq + Hash, V, S: BuildHasher> Mutate for HashMap<K, V, S> {}
 
 impl<K: Eq + Hash, V, S: BuildHasher> AddRemove for HashMap<K, V, S> {}
 
+//TODO #[test_impl]
 impl<K: Eq + Hash, V, S: BuildHasher + Default> Collection for HashMap<K, V, S> {
     type Item = (K, V);
 
@@ -493,6 +504,7 @@ impl<'a, K: 'a + Eq + Hash, V: 'a> map::VacantEntry for hash_map::VacantEntry<'a
 
 impl<T: Eq + Hash, S: BuildHasher> AddRemove for HashSet<T, S> {}
 
+//TODO #[test_impl]
 impl<T: Eq + Hash, S: BuildHasher + Default> Collection for HashSet<T, S> {
     type Item = T;
 
@@ -565,6 +577,7 @@ impl<T: Eq + Hash, S: BuildHasher + Default> set::Base for HashSet<T, S> {
     }
 }
 
+//TODO: #[test_impl]
 impl<T: Eq + Hash + Borrow<Q>, Q: ?Sized + Eq + Hash, S: BuildHasher + Default> Set<Q> for HashSet<T, S> {
     fn contains(&self, item: &Q) -> bool {
         self.contains(item)
@@ -587,6 +600,7 @@ impl<T> Mutate for LinkedList<T> {}
 
 impl<T> AddRemove for LinkedList<T> {}
 
+#[test_impl]
 impl<T> Collection for LinkedList<T> {
     type Item = T;
 
@@ -681,6 +695,7 @@ impl<T> Mutate for Vec<T> {}
 
 impl<T> AddRemove for Vec<T> {}
 
+#[test_impl]
 impl<T> Collection for Vec<T> {
     type Item = T;
 
@@ -741,6 +756,7 @@ impl<T> DrainRange<Range<usize>> for Vec<T> {
     }
 }
 
+#[test_impl]
 impl<T> List for Vec<T> {
     fn get(&self, index: usize) -> Option<&T> {
         (**self).get(index)
@@ -800,6 +816,7 @@ impl<T> Mutate for VecDeque<T> {}
 
 impl<T> AddRemove for VecDeque<T> {}
 
+#[test_impl]
 impl<T> Collection for VecDeque<T> {
     type Item = T;
 
@@ -860,6 +877,7 @@ impl<T> DrainRange<Range<usize>> for VecDeque<T> {
     }
 }
 
+#[test_impl]
 impl<T> List for VecDeque<T> {
     fn get(&self, index: usize) -> Option<&T> {
         self.get(index)
