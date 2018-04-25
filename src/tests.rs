@@ -145,6 +145,17 @@ pub trait QueueTests : Queue<Item=isize>
 
 }
 
+pub type IterTestsType1 = isize;//TODO autogen
+#[trait_tests]
+pub trait IterTests: super::Iter<Item=isize> + Default {
+    fn test_iterate()
+    {
+        let mut a = &Self::default();
+        let mut it = a.iter();
+        assert_eq!(it.next(), None);
+        assert_eq!(it.next(), None); //Should stay None at the end of an iterator.
+    }
+}
 
 #[trait_tests]
 pub trait PrioQueueTests : PrioQueue<Item=isize>
@@ -184,6 +195,7 @@ pub trait PrioQueueTests : PrioQueue<Item=isize>
             assert_eq!(heap.pop().unwrap(), sorted.pop().unwrap());
         }
     }
+
 
 //    fn test_iterator_reverse() {
 //        let data = vec![5, 9, 3];

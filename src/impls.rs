@@ -5,7 +5,7 @@ use std::mem;
 use std::ops::Range;
 use super::*;
 use trait_tests::test_impl;
-use super::tests::{PrioQueueTests, PrioQueueTestsType1, SetTests, SetTestsType1, CollectionTests, CollectionTestsType1, ListTests, ListTestsType1, QueueTests, QueueTestsType1};
+use super::tests::*;
 
 impl<T> Mutate for [T] {}
 
@@ -641,6 +641,7 @@ impl<T> Collection for LinkedList<T> {
     }
 }
 
+#[test_impl]
 impl<T> Iter for LinkedList<T> {
     fn iter<'a>(&'a self) -> Box<Iterator<Item = &'a T> + 'a> {
         Box::new(self.iter())
