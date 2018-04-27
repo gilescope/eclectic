@@ -105,7 +105,7 @@ use super::Queue;
 
 #[trait_tests]
 pub trait QueueTests : Queue<Item=isize>
-    + AddRemove + Sized + Clone
+    + AddRemove + Clone
     + ::std::iter::FromIterator<isize>
 {
     //helper
@@ -202,7 +202,7 @@ pub trait DrainRangeTests: super::DrainRange<::std::ops::RangeFull>
 
 #[trait_tests]
 pub trait PrioQueueTests : PrioQueue<Item=isize>
-    + AddRemove + Sized + Clone
+    + AddRemove + Clone
     + ::std::iter::FromIterator<isize>
 {
     fn from(vec: Vec<isize>) -> Self {
@@ -585,11 +585,9 @@ impl hash::Hash for Foo {
 
 #[trait_tests]
 pub trait SetTests: Set<isize, Item=isize>
-//+ FromIterator<isize>
 + IntoIterator<Item=isize>
 + Debug
 + Eq
-+ Sized
 + AddRemove
 + ::std::iter::FromIterator<isize>
 {
@@ -877,27 +875,6 @@ pub trait SetTests: Set<isize, Item=isize>
 //    }
 //}
 
-//#[trait_tests]
-//pub trait SetTestschar: Set<Item=char> + Sized + IntoIterator<Item=char> + AddRemove + Default
-//{
-//    //#[test]
-//    fn test_move_iter()
-//    {
-//        let hs = {
-//            let mut hs = Self::default();
-//
-//            hs.insert('a');
-//            hs.insert('b');
-//
-//            hs
-//        };
-//
-//        let v = hs.into_iter().collect::<Vec<char>>();
-//        assert!(v == ['a', 'b'] || v == ['b', 'a']);
-//    }
-//}
-
-
 
 //
 // List tests
@@ -1001,7 +978,6 @@ use proptest::test_runner::{TestRunner, FailurePersistence, Config};
 pub trait ListTests: List<Item=isize>
     + PartialEq
     + Debug
-    + Sized
     + AddRemove
     + Mutate
     + ::std::iter::FromIterator<isize>
