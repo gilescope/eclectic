@@ -3,9 +3,10 @@ use super::{AddRemove, PrioQueue, Collection};
 
 
 #[trait_tests]
-pub trait CollectionTests : Collection<Item=isize> + Sized + Default {
+pub trait CollectionTests : Collection<Item=isize>
+    + ::std::iter::FromIterator<isize> {
     fn test_new_length() {
-        let me = Self::default();
+        let me = &Self::from_iter(vec![]);
         assert_eq!(me.len(), 0);
         assert!(me.capacity() >= me.len());
     }
@@ -104,7 +105,7 @@ use super::Queue;
 
 #[trait_tests]
 pub trait QueueTests : Queue<Item=isize>
-    + AddRemove + Sized + Clone + Default
+    + AddRemove + Sized + Clone
     + ::std::iter::FromIterator<isize>
 {
     //helper
@@ -151,10 +152,11 @@ pub trait QueueTests : Queue<Item=isize>
 
 pub type IterTestsType1 = isize;//TODO autogen
 #[trait_tests]
-pub trait IterTests: super::Iter<Item=isize> + Default {
+pub trait IterTests: super::Iter<Item=isize>
+    + ::std::iter::FromIterator<isize> {
     fn test_iterate()
     {
-        let a = &Self::default();
+        let a = &Self::from_iter(vec![]);
         let mut it = a.iter();
         assert_eq!(it.next(), None);
         assert_eq!(it.next(), None); //Should stay None at the end of an iterator.
@@ -200,7 +202,7 @@ pub trait DrainRangeTests: super::DrainRange<::std::ops::RangeFull>
 
 #[trait_tests]
 pub trait PrioQueueTests : PrioQueue<Item=isize>
-    + AddRemove + Sized + Clone + Default
+    + AddRemove + Sized + Clone
     + ::std::iter::FromIterator<isize>
 {
     fn from(vec: Vec<isize>) -> Self {
@@ -393,13 +395,13 @@ pub trait PrioQueueTests : PrioQueue<Item=isize>
 
 
     fn test_empty_pop() {
-        let mut heap = Self::default();
+        let mut heap = Self::from_iter(vec![]);
         assert!(heap.pop().is_none());
     }
 
 
     fn test_empty_peek() {
-        let empty = Self::default();
+        let empty = Self::from_iter(vec![]);
         assert!(empty.peek().is_none());
     }
 
@@ -467,7 +469,7 @@ pub trait PrioQueueTests : PrioQueue<Item=isize>
 
 
     fn test_append_to_empty() {
-        let mut a = Self::default();
+        let mut a = Self::from_iter(vec![]);
         let mut b = Self::from(vec![-20, 5, 43]);
 
         a.append(&mut b);
@@ -589,12 +591,12 @@ pub trait SetTests: Set<isize, Item=isize>
 + Eq
 + Sized
 + AddRemove
-+ Default
++ ::std::iter::FromIterator<isize>
 {
     fn test_disjoint()
     {
-        let mut xs = Self::default();
-        let mut ys = Self::default();
+        let mut xs = Self::from_iter(vec![]);
+        let mut ys = Self::from_iter(vec![]);
 
         assert!(xs.is_disjoint(&ys));
         assert!(ys.is_disjoint(&xs));
@@ -616,13 +618,13 @@ pub trait SetTests: Set<isize, Item=isize>
 
     fn test_subset_and_superset()
     {
-        let mut a = Self::default();
+        let mut a = Self::from_iter(vec![]);
         assert!(a.insert(0));
         assert!(a.insert(5));
         assert!(a.insert(11));
         assert!(a.insert(7));
 
-        let mut b = Self::default();
+        let mut b = Self::from_iter(vec![]);
         assert!(b.insert(0));
         assert!(b.insert(7));
         assert!(b.insert(19));
@@ -645,7 +647,7 @@ pub trait SetTests: Set<isize, Item=isize>
 
     fn test_iterate()
     {
-        let mut a = Self::default();
+        let mut a = Self::from_iter(vec![]);
         for i in 0..32 {
             assert!(a.insert(i));
         }
@@ -780,13 +782,13 @@ pub trait SetTests: Set<isize, Item=isize>
     {
         // These constants once happened to expose a bug in insert().
         // I'm keeping them around to prevent a regression.
-        let mut s1 = Self::default();
+        let mut s1 = Self::from_iter(vec![]);
 
         s1.insert(1);
         s1.insert(2);
         s1.insert(3);
 
-        let mut s2 = Self::default();
+        let mut s2 = Self::from_iter(vec![]);
 
         s2.insert(1);
         s2.insert(2);
@@ -800,8 +802,8 @@ pub trait SetTests: Set<isize, Item=isize>
 
     fn test_show()
     {
-        let mut set = Self::default();
-        let empty = Self::default();
+        let mut set = Self::from_iter(vec![]);
+        let empty = Self::from_iter(vec![]);
 
         set.insert(1);
         set.insert(2);
@@ -843,7 +845,7 @@ pub trait SetTests: Set<isize, Item=isize>
     fn test_move_iter()
     {
         let hs = {
-            let mut hs = Self::default();
+            let mut hs = Self::from_iter(vec![]);
 
             hs.insert(1);
             hs.insert(2);
@@ -1002,7 +1004,6 @@ pub trait ListTests: List<Item=isize>
     + Sized
     + AddRemove
     + Mutate
-    + Default
     + ::std::iter::FromIterator<isize>
   //  + Index<usize, Output=isize> - not supported by linked list.
 {
@@ -1053,7 +1054,7 @@ pub trait ListTests: List<Item=isize>
 //    }
 
     fn zero_sized_values() {
-        let mut v = Self::default();
+        let mut v = Self::from_iter(vec![]);
         assert_eq!(v.len(), 0);
         v.push(1);
         assert_eq!(v.len(), 1);
@@ -1083,7 +1084,7 @@ pub trait ListTests: List<Item=isize>
     }
 
     fn test_basic() {
-        let mut n = Self::default();
+        let mut n = Self::from_iter(vec![]);
         n.push_front(2);
         n.push_front(3);
         {
@@ -1115,7 +1116,7 @@ pub trait ListTests: List<Item=isize>
     fn test_split_off() {
         // singleton
         {
-            let mut m = Self::default();
+            let mut m = Self::from_iter(vec![]);
             m.push_back(1);
 
             let p = m.split_off(0);
@@ -1156,7 +1157,7 @@ pub trait ListTests: List<Item=isize>
 
         // no-op on the last index
         {
-            let mut m = Self::default();
+            let mut m = Self::from_iter(vec![]);
             m.push_back(1);
 
             let p = m.split_off(1);
@@ -1173,7 +1174,7 @@ pub trait ListTests: List<Item=isize>
         for (i, elt) in m.iter().enumerate() {
             assert_eq!(i as isize, *elt);
         }
-        let mut n = Self::default();
+        let mut n = Self::from_iter(vec![]);
         assert_eq!(n.iter().next(), None);
         n.push_front(4);
         let mut it = n.iter();
@@ -1236,7 +1237,7 @@ pub trait ListTests: List<Item=isize>
             len -= 1;
         }
         assert_eq!(len, 0);
-        let mut n = Self::default();
+        let mut n = Self::from_iter(vec![]);
         assert!(n.iter_mut().next().is_none());
         n.push_front(4);
         n.push_back(5);
@@ -1596,7 +1597,7 @@ pub trait ListTests: List<Item=isize>
         });
 
         runner.run(&prop::collection::vec(1..1000isize, 1..10000), | inputs | {
-            let mut me = Self::default();
+            let mut me = Self::from_iter(vec![]);
             let input_len = inputs.len();
             for i in inputs.clone() {
                 me.push(i);
