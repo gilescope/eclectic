@@ -91,7 +91,7 @@ impl<K: Ord, V> Mutate for BTreeMap<K, V> {}
 
 impl<K: Ord, V> AddRemove for BTreeMap<K, V> {}
 
-//TODO #[test_impl]
+//TODO CollectionTests is over isize, but this is (K,V) tuple. Doesn't match.
 impl<K: Ord, V> Collection for BTreeMap<K, V> {
     type Item = (K, V);
 
@@ -245,6 +245,7 @@ impl<T: Ord> Collection for BTreeSet<T> {
     }
 }
 
+#[test_impl]
 impl<T: Ord> Iter for BTreeSet<T> {
     fn iter<'a>(&'a self) -> Box<Iterator<Item = &'a T> + 'a> {
         Box::new(self.iter())
@@ -751,6 +752,7 @@ impl<T> Iter for Vec<T> {
     }
 }
 
+#[test_impl]
 impl<T> DrainRange<Range<usize>> for Vec<T> {
     fn drain_range<'a>(&'a mut self, range: Range<usize>) -> Box<Iterator<Item = T> + 'a> {
         Box::new(self.drain(range))
@@ -951,6 +953,7 @@ impl<T> Deque for VecDeque<T> {
     }
 }
 
+#[test_impl]
 impl<T> FifoQueue for VecDeque<T> {
     fn front_mut(&mut self) -> Option<&mut T> {
         self.front_mut()

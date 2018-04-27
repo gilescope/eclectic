@@ -131,18 +131,22 @@ pub trait QueueTests : Queue<Item=isize>
     }
     //helper
 
-
+    ///
+    /// Given priority queue is a queue we can't assume any order,
+    /// but we can expect the same number of items in there as we iterate through
+    /// because a queue is not a set.
+    ///
     fn test_iterator() {
         let data = vec![5, 9, 3];
         let iterout = [9, 5, 3];
-        let heap = Self::from(data);
-        let mut i = 0;
-        for el in heap.iter() {
-            assert_eq!(*el, iterout[i]);
-            i += 1;
+        let queue = Self::from(data);
+        let mut count = 0;
+        for el in queue.iter() {
+            assert!(iterout.contains(el));
+            count += 1;
         }
+        assert_eq!(count, 3);
     }
-
 }
 
 pub type IterTestsType1 = isize;//TODO autogen
@@ -150,10 +154,47 @@ pub type IterTestsType1 = isize;//TODO autogen
 pub trait IterTests: super::Iter<Item=isize> + Default {
     fn test_iterate()
     {
-        let mut a = &Self::default();
+        let a = &Self::default();
         let mut it = a.iter();
         assert_eq!(it.next(), None);
         assert_eq!(it.next(), None); //Should stay None at the end of an iterator.
+    }
+}
+
+pub type DrainRangeTestsType1=isize;
+
+/// We can't assume an ordering on the drain...
+#[trait_tests]
+pub trait DrainRangeTests: super::DrainRange<::std::ops::RangeFull>
+    + super::DrainRange<::std::ops::Range<usize>>
+    + super::DrainRange<::std::ops::RangeTo<usize>>
+    + super::DrainRange<::std::ops::RangeFrom<usize>>
+    + super::DrainRange<::std::ops::RangeFull>
+    + AddRemove
+    + ::std::iter::FromIterator<isize>
+{
+    fn test_drain_all() {
+        let mut collection = &mut Self::from_iter(vec![1,2,3,4,5]);
+        let mut drained : Vec<_> = collection.drain_range(..).collect();
+        assert_eq!(drained.len(), 5);
+    }
+
+    fn test_drain_head() {
+        let mut collection = &mut Self::from_iter(vec![1,2,3,4,5]);
+        let mut drained : Vec<_> = collection.drain_range(..1).collect();
+        assert_eq!(drained.len(), 1);
+    }
+
+    fn test_drain_middle() {
+        let mut collection = &mut Self::from_iter(vec![1,2,3,4,5]);
+        let mut drained : Vec<_> = collection.drain_range(2..5).collect();
+        assert_eq!(drained.len(), 3);
+    }
+
+    fn test_drain_tail() {
+        let mut collection = &mut Self::from_iter(vec![1,2,3,4,5]);
+        let mut drained : Vec<_> = collection.drain_range(4..).collect();
+        assert_eq!(drained.len(), 1);
     }
 }
 
@@ -184,6 +225,16 @@ pub trait PrioQueueTests : PrioQueue<Item=isize>
         return results;
     }
 
+    fn test_iterator() {
+        let data = vec![5, 9, 3];
+        let iterout = [9, 5, 3];
+        let heap = Self::from(data);
+        let mut i = 0;
+        for el in heap.iter() {
+            assert_eq!(*el, iterout[i]);
+            i += 1;
+        }
+    }
 
     fn test_peek_and_pop() {
         let data = vec![2, 4, 6, 2, 1, 8, 10, 3, 5, 7, 0, 9, 1];
@@ -1574,3 +1625,24 @@ pub trait ListTests: List<Item=isize>
 
 //TODO LinkedList doesn't implement List!
 //impl ListTests for LinkedList<isize>{ fn new() -> Self { LinkedList::new() } }
+
+
+pub type FifoQueueTestsType1 = isize;
+
+#[trait_tests]
+pub trait FifoQueueTests: super::FifoQueue<Item=isize>
+    + ::std::iter::FromIterator<isize>
+    + AddRemove
+{
+    fn test_push_pop() {
+        let me = &mut Self::from_iter(vec![1isize,2,3]);
+
+        assert_eq!(me.pop_front(), Some(1));
+
+        me.push(4isize);
+        assert_eq!(me.pop_front(), Some(2));
+        assert_eq!(me.pop_front(), Some(3));
+        assert_eq!(me.pop_front(), Some(4));
+        assert_eq!(me.pop_front(), None);
+    }
+}
